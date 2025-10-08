@@ -1,10 +1,14 @@
+import { set } from "mongoose";
 import { useState } from "react"
 import { Navigate } from "react-router-dom";
+import { UserContext } from "../UserContext";
+import { useContext } from "react";
 
 export default function LoginPage(){
     const [username, setUsername]= useState('');
     const [password, setPassword]= useState('');
     const [redirect, setRedirect]= useState(false)
+    const {setUserInfo} = useContext(UserContext);
     async function login(ev){
         ev.preventDefault();
         const response = await fetch('http://localhost:4000/login', {
@@ -15,8 +19,11 @@ export default function LoginPage(){
         });
         if(response.ok)
         {
-            //redirect to the home page
-            setRedirect(true);
+            response.json().then(userInfo => {
+                setUserInfo(userInfo);
+                //redirect to the home page
+                setRedirect(true);
+            })
         }
         else{
             alert('wrong credentials!');

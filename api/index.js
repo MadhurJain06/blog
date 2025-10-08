@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -12,6 +13,7 @@ const secret = 'fbewug3fvnfbi09fs32biufbv98vn4387'
 
 app.use(cors({credentials:true, origin:'http://localhost:5173'}));
 app.use(express.json());
+app.use(cookieParser())
 
 mongoose.connect(
   "mongodb+srv://blog_site:536asSJOx4uIoxLT@cluster0.h6iznsu.mongodb.net/"
@@ -38,12 +40,28 @@ app.post("/login", async(req,res)=>{
     //logged in
     jwt.sign({username,id:userDoc._id},secret,{},(err,token)=>{
       if(err) throw err;
-      res.cookie('token',token).json('ok')
+      res.cookie('token',token).json({
+        id:userDoc._id,
+        username,
+      })
     })
   }else{
     //not logged in
     res.status(400).json('wrong credentials');
   }
+
+})
+
+app.get("/profile", (req,res)=>{
+  const {token} = req.cookies;
+  //we can only read it on backend if we have secret
+  jwt.verify(token, secret, {},(err,info)=>{
+    if(err) throw err;
+    res.json(info);
+  });
+})
+app.post("/logout",(req,res)=>{
+  res.cookie('token','').json('ok'); //empty token
 
 })
 
