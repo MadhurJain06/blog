@@ -1,5 +1,22 @@
 {
+  "name": "mern-blog",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "server": "nodemon api/index.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently -c \"auto\" -n \"server,client\" -p \"[{name}]\" --names \"SERVER,CLIENT\" --prefix-colors \"cyan,magenta\" --raw \"npm run server\" \"npm run client\""
+  },
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongoose": "^8.19.1",
     "react-router-dom": "^7.9.3"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env-shell": "^7.0.3",
+    "nodemon": "^3.1.10"
   }
 }
