@@ -1,4 +1,6 @@
-export default function Post(){
+import { format } from "date-fns";
+
+export default function Post({title, summary, cover, content, createdAt}){
     return(
         <div className='post'>
 
@@ -7,13 +9,13 @@ export default function Post(){
             </div>
 
             <div className="texts">
-                <h2>How Dopamine Detox can help you in your daily routine.</h2>
+                <h2>{title}</h2>
                 <p className="info">
                     <a className='author'>Madhur Jain</a>
-                    <time>2025-10-12 12:05</time>
+                    <time>{format(new Date(createdAt), 'dd-MMM-yyyy, HH:mm')}</time>
                 </p>
                 <p className='summary'>
-                    “Be kind to yourself” is a piece of advice that’s often given to people during difficult times or moments of stress. But for someone who is driven, a perfectionist or facing pressure, the idea of self-compassion can feel uncomfortable. To them, kindness might feel like letting themselves off the hook.
+                    {summary}
                 </p>
             </div>
 
