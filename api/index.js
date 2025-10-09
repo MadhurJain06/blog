@@ -81,6 +81,7 @@ app.post('/post', uploadMiddleware.single('files'), async (req, res)=>{
       summary,
       content,
       cover: newPath,
+      author
   })
 
 
