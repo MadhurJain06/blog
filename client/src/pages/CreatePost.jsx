@@ -18,26 +18,45 @@ const formats = [
     'link', 'image'
 ]
 
-export default function CreatePost(){
+export default function CreatePost() {
+
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
-    
-    return(
-        <form>
-            <input type="title" placeholder="Title"  
-            value={title} 
-            onChange={(ev)=> setTitle(ev.target.value)}/>
-            <input type="summary" placeholder="Summary"  
-            value={summary} 
-            onChange={(ev)=> setSummary(ev.target.value)}/>
-            <input type="file"  />
-            <ReactQuill value={content} 
-            onChange={(value) => setContent(value)}
-            modules={modules} 
-            formats={formats} 
+    const [files, setFiles] = useState(null);
+
+    async function createNewPost(ev) {
+        ev.preventDefault();
+
+        const data = new FormData();
+        data.append('title', title);
+        data.append('summary', summary);
+        data.append('content', content);
+        data.append('files', files[0]);
+
+        console.log(files);
+        const response = await fetch('http://localhost:4000/post', {
+            method: 'POST',
+            body: data,
+        })
+        console.log(await response.json());
+    }
+    return (
+        <form onSubmit={createNewPost}>
+            <input type="title" placeholder="Title"
+                value={title}
+                onChange={(ev) => setTitle(ev.target.value)} />
+            <input type="summary" placeholder="Summary"
+                value={summary}
+                onChange={(ev) => setSummary(ev.target.value)} />
+            <input type="file"
+                onChange={(e) => setFiles(e.target.files)} />
+            <ReactQuill value={content}
+                onChange={(value) => setContent(value)}
+                modules={modules}
+                formats={formats}
             />
-            <button style={{marginTop:'10px'}}>Create Post</button>
+            <button style={{ marginTop: '10px' }}>Create Post</button>
         </form>
     )
 }
