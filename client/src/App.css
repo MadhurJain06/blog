@@ -85,6 +85,7 @@ input{
 
 }
 button{
+  cursor: pointer;
   width: 80%;
   display: block;
   background-color: #777;
@@ -150,4 +151,34 @@ div.post-page div.content{
   font-weight: 400;
   font-size: 20px;
   line-height: 27px;
+}
+
+div.edit-row{
+  text-align:right;
+  margin-bottom: 3px;
+}
+div.post-page a.edit-btn{
+  background-color:#333 ;
+  display: inline-block;
+  text-decoration: none;
+  color: #fff;
+  font-size: small;
+  padding: 5px 7px;
+  border-radius: 4px;
+  align-items: center;
+  display: inline-flex;
+  gap: 5px;
+}
+div.post-page .edit-btn:hover{
+  background-color: #555;
+  cursor: pointer;
+  
+}
+
+a:hover{
+  cursor: pointer;
+  opacity: 0.75;
+}
+a svg{
+  height: 15px;
 }

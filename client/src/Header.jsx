@@ -25,12 +25,13 @@ export default function Header(){
   const username = userInfo?.username;
     return(
         <header>
-                <Link to="/" className="logo">MyBlog</Link>
+                <Link to="/" className="logo">BlogPost</Link>
                 <nav>
                   {username && (
                     <>
                       <Link to="/create">Create Post</Link>
                       <a onClick={logout}>Logout</a>
+
                     </>
                   )}
                   {!username && (
