@@ -18,12 +18,14 @@ export default function PostPage(){
     return(
         <div className="post-page">
             <h1>{postInfo.title}</h1>
-            <time>{(new Date(postInfo.createdAt)).toLocaleString()}</time>
-            <div className="author">by {postInfo.author.username}</div>
+            <p className="info">
+                <div className="author">by @{postInfo.author.username}</div>
+                <time>{(new Date(postInfo.createdAt)).toLocaleString()}</time>
+            </p>           
             <div className="image">
             <img src={`http://localhost:4000/${postInfo.cover}`} alt="" />
             </div>
-            <div 
+            <div className="content"
             dangerouslySetInnerHTML={{__html:postInfo.content}}>
 
             </div>
