@@ -58,7 +58,6 @@ app.post("/login", async(req,res)=>{
 
 app.get("/profile", (req,res)=>{
   const {token} = req.cookies;
-  //we can only read it on backend if we have secret
   jwt.verify(token, secret, {},(err,info)=>{
     if(err) throw err;
     res.json(info);
@@ -74,21 +73,31 @@ app.post('/post', uploadMiddleware.single('files'), async (req, res)=>{
   const ext = parts[parts.length-1];
   const newPath = path + "." + ext;
   fs.renameSync(path,newPath);
-  const {title, summary, content} = req.body;
-  
-  const postDoc = await Post.create({
-      title,
-      summary,
-      content,
-      cover: newPath,
-      author
-  })
 
+  const { token } = req.cookies;  //verify the token, get the info-> get the user id->get the author
+  jwt.verify(token, secret, {}, async(err, info) => {
+    if (err) throw err;
+    const {title, summary, content} = req.body;
+    const postDoc = await Post.create({
+        title,
+        summary,
+        content,
+        cover: newPath,
+        author: info.id,
+    })
+    
+    res.json({postDoc});
+  });
 
-  res.json({postDoc});
+ 
 })
 app.get('/post',async (req,res)=>{
-  res.json(await Post.find());
+  res.json(
+    await Post.find().
+    populate('author',['username'])
+    .sort({createdAt:-1})
+    .limit(20)
+  );
 })
 
 

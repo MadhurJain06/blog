@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-export default function Post({title, summary, cover, content, createdAt}){
+export default function Post({title, summary, cover, content, createdAt,author}){
     return(
         <div className='post'>
 
@@ -11,7 +11,7 @@ export default function Post({title, summary, cover, content, createdAt}){
             <div className="texts">
                 <h2>{title}</h2>
                 <p className="info">
-                    <a className='author'>Madhur Jain</a>
+                    <a className='author'>{author.username}</a>
                     <time>{format(new Date(createdAt), 'dd-MMM-yyyy, HH:mm')}</time>
                 </p>
                 <p className='summary'>
