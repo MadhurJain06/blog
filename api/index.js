@@ -69,7 +69,7 @@ app.post("/logout",(req,res)=>{
   res.cookie('token','').json('ok'); //empty token
 
 })
-app.post('/post', uploadMiddleware.single('files'), async (req, res)=>{
+app.post('/posts', uploadMiddleware.single('file'), async (req, res)=>{
   const {originalname, path} = req.file;
   const parts = originalname.split('.');
   const ext = parts[parts.length-1];
@@ -93,7 +93,7 @@ app.post('/post', uploadMiddleware.single('files'), async (req, res)=>{
 
  
 })
-app.get('/post',async (req,res)=>{
+app.get('/posts',async (req,res)=>{
   res.json(
     await Post.find().
     populate('author',['username'])
@@ -107,7 +107,7 @@ app.get('/posts/:id', async(req, res)=>{
   const postDoc = await Post.findById(id).populate('author',['username']);
   res.json(postDoc);
 })
-app.put('/posts',uploadMiddleware.single('files') ,async(req, res)=>{
+app.put('/posts',uploadMiddleware.single('file') ,async(req, res)=>{
   let newPath =null;
   if(req.file){
     const { originalname, path } = req.file;
@@ -134,6 +134,7 @@ app.put('/posts',uploadMiddleware.single('files') ,async(req, res)=>{
       cover:newPath? newPath:postDoc.cover,
     })
     res.json(postDoc);
+    await postDoc.save();
   });
 
 })

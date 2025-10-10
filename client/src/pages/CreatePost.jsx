@@ -19,10 +19,9 @@ export default function CreatePost() {
         data.append('title', title);
         data.append('summary', summary);
         data.append('content', content);
-        data.append('files', files[0]);
+        data.append('file', files[0]);
 
-        console.log(files);
-        const response = await fetch('http://localhost:4000/post', {
+        const response = await fetch('http://localhost:4000/posts/', {
             method: 'POST',
             body: data,
             credentials:'include',

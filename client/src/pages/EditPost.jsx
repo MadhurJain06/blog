@@ -33,7 +33,7 @@ export default function EditPost(){
         data.append('id',id);
         if (files?.[0])
         {
-            data.append('files', files?.[0]);
+            data.append('file', files?.[0]);
         }
         const response=await fetch('http://localhost:4000/posts/',{
             method:'PUT',
@@ -42,7 +42,6 @@ export default function EditPost(){
         });
         if(response.ok){
             setRedirect(true);
-
         }
         
     }
