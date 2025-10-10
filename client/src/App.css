@@ -37,7 +37,10 @@ div.post{
   display: grid;
   grid-template-columns: 1.3fr 1.1fr;
   gap:20px;
+  padding-right: 18px;
+  border-radius: 5px;
   margin-bottom: 30px;
+  box-shadow:0px 0px 7px ;
 }
 @media screen and (max-width:720px) {
   div.post{
