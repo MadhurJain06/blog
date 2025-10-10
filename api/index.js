@@ -17,7 +17,9 @@ const secret = 'fbewug3fvnfbi09fs32biufbv98vn4387'
 
 app.use(cors({credentials:true, origin:'http://localhost:5173'}));
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
+app.use('/uploads', express.static(__dirname + '/uploads'));
+
 
 mongoose.connect(
   "mongodb+srv://blog_site:536asSJOx4uIoxLT@cluster0.h6iznsu.mongodb.net/"

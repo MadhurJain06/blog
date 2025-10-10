@@ -5,7 +5,8 @@ export default function Post({title, summary, cover, content, createdAt,author})
         <div className='post'>
 
             <div className="image">
-                <img src="https://images.theconversation.com/files/688908/original/file-20250903-86-h4ds6y.jpg?ixlib=rb-4.1.0&rect=0%2C0%2C5000%2C2500&q=50&auto=format&w=1336&h=668&fit=crop&dpr=2" alt="" />
+                <img 
+                src={'http://localhost:4000/'+cover} alt="" />
             </div>
 
             <div className="texts">
