@@ -1,29 +1,33 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const Post = require("./models/Post")
+const Post = require("./models/Post");
 const User = require("./models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
-const uploadMiddleware = multer({dest: 'uploads/'})
-const fs = require('fs');
+const uploadMiddleware = multer({ dest: "uploads/" });
+const fs = require("fs");
 
 const app = express();
 
 const salt = bcrypt.genSaltSync(10);
-const secret = 'fbewug3fvnfbi09fs32biufbv98vn4387'
-
-app.use(cors({credentials:true, origin:'http://localhost:5173'}));
+const secret = process.env.JWT_SECRET;
+console.log("JWT:", process.env.JWT_SECRET ? "✅" : "❌");
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
 app.use(cookieParser());
-app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use("/uploads", express.static(__dirname + "/uploads"));
 
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Could not connect to MongoDB:", err));
 
-mongoose.connect(
-  "mongodb+srv://blog_site:536asSJOx4uIoxLT@cluster0.h6iznsu.mongodb.net/"
-);
+console.log("Loaded ENV:", process.env.MONGODB_URI ? "✅ found" : "❌ missing");
 
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -38,109 +42,103 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/login", async(req,res)=>{
-  const {username, password} = req.body;
-  const userDoc = await User.findOne({username});
-  const passOK=bcrypt.compareSync(password, userDoc.password);
-  if(passOK){
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  const userDoc = await User.findOne({ username });
+  const passOK = bcrypt.compareSync(password, userDoc.password);
+  if (passOK) {
     //logged in
-    jwt.sign({username,id:userDoc._id},secret,{},(err,token)=>{
-      if(err) throw err;
-      res.cookie('token',token).json({
-        id:userDoc._id,
+    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+      if (err) throw err;
+      res.cookie("token", token).json({
+        id: userDoc._id,
         username,
-      })
-    })
-  }else{
+      });
+    });
+  } else {
     //not logged in
-    res.status(400).json('wrong credentials');
+    res.status(400).json("wrong credentials");
   }
+});
 
-})
-
-app.get("/profile", (req,res)=>{
-  const {token} = req.cookies;
-  jwt.verify(token, secret, {},(err,info)=>{
-    if(err) throw err;
+app.get("/profile", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, (err, info) => {
+    if (err) throw err;
     res.json(info);
   });
-})
-app.post("/logout",(req,res)=>{
-  res.cookie('token','').json('ok'); //empty token
-
-})
-app.post('/posts', uploadMiddleware.single('file'), async (req, res)=>{
-  const {originalname, path} = req.file;
-  const parts = originalname.split('.');
-  const ext = parts[parts.length-1];
+});
+app.post("/logout", (req, res) => {
+  res.cookie("token", "").json("ok"); //empty token
+});
+app.post("/posts", uploadMiddleware.single("file"), async (req, res) => {
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
+  const ext = parts[parts.length - 1];
   const newPath = path + "." + ext;
-  fs.renameSync(path,newPath);
+  fs.renameSync(path, newPath);
 
-  const { token } = req.cookies;  //verify the token, get the info-> get the user id->get the author
-  jwt.verify(token, secret, {}, async(err, info) => {
+  const { token } = req.cookies; //verify the token, get the info-> get the user id->get the author
+  jwt.verify(token, secret, {}, async (err, info) => {
     if (err) throw err;
-    const {title, summary, content} = req.body;
+    const { title, summary, content } = req.body;
     const postDoc = await Post.create({
-        title,
-        summary,
-        content,
-        cover: newPath,
-        author: info.id,
-    })
-    
-    res.json({postDoc});
+      title,
+      summary,
+      content,
+      cover: newPath,
+      author: info.id,
+    });
+
+    res.json({ postDoc });
   });
-
- 
-})
-app.get('/posts',async (req,res)=>{
+});
+app.get("/posts", async (req, res) => {
   res.json(
-    await Post.find().
-    populate('author',['username'])
-    .sort({createdAt:-1})
-    .limit(20)
+    await Post.find()
+      .populate("author", ["username"])
+      .sort({ createdAt: -1 })
+      .limit(20)
   );
-})
+});
 
-app.get('/posts/:id', async(req, res)=>{
-  const {id} = req.params;
-  const postDoc = await Post.findById(id).populate('author',['username']);
+app.get("/posts/:id", async (req, res) => {
+  const { id } = req.params;
+  const postDoc = await Post.findById(id).populate("author", ["username"]);
   res.json(postDoc);
-})
-app.put('/posts',uploadMiddleware.single('file') ,async(req, res)=>{
-  let newPath =null;
-  if(req.file){
+});
+app.put("/posts", uploadMiddleware.single("file"), async (req, res) => {
+  let newPath = null;
+  if (req.file) {
     const { originalname, path } = req.file;
     const parts = originalname.split(".");
     const ext = parts[parts.length - 1];
     newPath = path + "." + ext;
     fs.renameSync(path, newPath);
   }
-  const {token} =req.cookies;
+  const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (err, info) => {
     if (err) throw err;
     const { id, title, summary, content } = req.body;
-    const postDoc = await Post.findById(id)
+    const postDoc = await Post.findById(id);
 
     const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
-    if(!isAuthor){ 
-      return res.status(400).json('you are not the author');
+    if (!isAuthor) {
+      return res.status(400).json("you are not the author");
     }
     //else update the post Document
     await postDoc.set({
-      title, 
-      summary, 
+      title,
+      summary,
       content,
-      cover:newPath? newPath:postDoc.cover,
-    })
+      cover: newPath ? newPath : postDoc.cover,
+    });
     res.json(postDoc);
     await postDoc.save();
   });
-
-})
+});
 
 app.listen(4000);
 
 //536asSJOx4uIoxLT
 //blog_site
-// mongodb+srv://blog_site:536asSJOx4uIoxLT@cluster0.h6iznsu.mongodb.net/
