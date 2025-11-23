@@ -6,7 +6,6 @@ A personal blog platform built with Node.js + JavaScript + CSS/HTML.
 This project is a blogging system (frontend + backend) composed of:  
 - **client/** – The front-end code (HTML, CSS, JavaScript)  
 - **api/** – The backend (Node.js)  
-- Built mainly in **JavaScript (83.2 %)**, with **CSS (15.2 %)** and a bit of **HTML (1.6 %)**. :contentReference[oaicite:1]{index=1}  
 - Purpose: Share blog content, possibly with CRUD operations, etc.
 
 ## ✅ Features  
