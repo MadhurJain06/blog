@@ -47,10 +47,12 @@ Although its only a minimalist design, but still provides smooth UI and easy to 
 git clone https://github.com/MadhurJain06/blog.git  
 cd blog  
 
-# Install backend dependencies
+# Install backend dependencies and to run (backend connect)
 cd api  
-npm install  
+npm install
+npx nodemon server.js  
 
-# Install frontend dependencies (if any)
+# Install frontend dependencies (if any) and to run
 cd ../client  
 npm install  
+npm run dev
